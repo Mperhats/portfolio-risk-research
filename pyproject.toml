@@ -35,10 +35,14 @@ testpaths = ["tests"]
 addopts = "-q"
 
 [build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
 
-[tool.setuptools]
+# The analysis package is `src/` (imported as `from src import ...`). Hatchling's
+# editable install writes a plain .pth entry for the project root into the venv,
+# so the package resolves from any working directory *and* is visible to static
+# checkers (Pyrefly, Pylance) that read the interpreter's sys.path.
+[tool.hatch.build.targets.wheel]
 packages = ["src"]
 
 [tool.pyrefly]

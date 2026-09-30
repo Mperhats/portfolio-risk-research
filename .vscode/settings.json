@@ -5,6 +5,8 @@
   "python.terminal.activateEnvironment": true,
   // Let editor analysis resolve the project's `src` package from any file.
   "python.analysis.extraPaths": ["${workspaceFolder}"],
+  // Ruff (bundled with Positron) should use the project interpreter.
+  "ruff.interpreter": ["${workspaceFolder}/.venv/bin/python"],
 
   // Tests: pytest, discovered from tests/.
   "python.testing.pytestEnabled": true,
