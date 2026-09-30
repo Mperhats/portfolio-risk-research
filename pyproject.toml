@@ -40,3 +40,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["src"]
+
+[tool.pyrefly]
+# Positron's Pyrefly checker: resolve `from src import ...` from files under
+# reports/ and tests/ the same way Quarto (execute-dir: project) and pytest do.
+project-includes = ["src", "tests", "scripts", "reports"]
+search-path = ["."]
+python-version = "3.11"

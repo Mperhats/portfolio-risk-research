@@ -3,6 +3,8 @@
   // Interpreter: the project virtual environment created by `uv sync` or `pip`.
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "python.terminal.activateEnvironment": true,
+  // Let editor analysis resolve the project's `src` package from any file.
+  "python.analysis.extraPaths": ["${workspaceFolder}"],
 
   // Tests: pytest, discovered from tests/.
   "python.testing.pytestEnabled": true,
