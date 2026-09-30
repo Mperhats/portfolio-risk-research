@@ -100,9 +100,11 @@ the HTML render is unaffected. Check `quarto check` for the Typst line.
 ## Open and run in Positron
 
 1. **File → Open Folder…** and choose `portfolio-risk-research`.
-2. Select the interpreter: click the interpreter selector (top right) and
-   choose `.venv/bin/python` in the project (Positron discovers it
-   automatically after `uv sync` or `pip install`).
+2. The interpreter: `.vscode/settings.json` points Positron at
+   `.venv/bin/python`, so it is selected automatically once the environment
+   exists (`uv sync` or `pip install`). If Positron shows a different
+   interpreter, click the interpreter selector (top right) and choose the
+   project `.venv`.
 3. Open `reports/portfolio_risk_review.qmd`.
 4. Click **Render** (or press `⇧⌘K`) and pick **HTML**; the preview opens in
    the Viewer pane. Code cells can also be run interactively with the

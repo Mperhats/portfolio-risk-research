@@ -28,7 +28,9 @@ venv/
 
 # OS / editors
 .DS_Store
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .positron/
 .idea/
 
