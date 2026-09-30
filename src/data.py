@@ -165,8 +165,8 @@ def load_prices(path: Path | str | None = None, regenerate_if_missing: bool = Tr
     By default the project's synthetic dataset is used. To analyse your own
     data instead, save a CSV with the columns
     ``date, asset_a, asset_b, asset_c, asset_d, benchmark`` to
-    ``data/raw/adjusted_prices.csv`` (see ``data/raw/README.md``) or pass its
-    path explicitly.
+    ``data/raw/adjusted_prices.csv`` (ascending ISO dates, positive prices, no
+    gaps; the file is git-ignored) or pass its path explicitly.
 
     Parameters
     ----------

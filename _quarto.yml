@@ -5,7 +5,6 @@ project:
     - reports/portfolio_risk_review.qmd
   execute-dir: project
 
-# Quarto discovers `.venv` in the project root and uses its Jupyter kernel.
 engine: jupyter
 jupyter: python3
 
@@ -46,9 +45,8 @@ format:
     code-tools: false
     anchor-sections: false
     smooth-scroll: true
-  # PDF via LaTeX (what "Render PDF" in Positron produces when a TeX
-  # distribution is installed). Figures are placed where they appear in the
-  # text and never exceed the text width.
+  # LaTeX PDF (Positron's Render PDF; `uv run render pdf`). Figures stay in
+  # reading order and within the text width.
   pdf:
     documentclass: article
     papersize: a4
@@ -71,8 +69,7 @@ format:
     citation-location: document
     toc: false
     keep-tex: false
-  # PDF via Typst (bundled with Quarto, no TeX needed):
-  #   quarto render reports/portfolio_risk_review.qmd --to typst
+  # Typst PDF, no TeX needed (`uv run render typst`).
   typst:
     output-file: portfolio_risk_review-typst.pdf
     papersize: a4

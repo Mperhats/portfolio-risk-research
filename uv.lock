@@ -2064,11 +2064,6 @@ dependencies = [
     { name = "tabulate" },
 ]
 
-[package.optional-dependencies]
-dev = [
-    { name = "pytest" },
-]
-
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
@@ -2084,13 +2079,11 @@ requires-dist = [
     { name = "numpy", specifier = ">=1.26" },
     { name = "pandas", specifier = ">=2.1" },
     { name = "pyarrow", specifier = ">=14.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "scipy", specifier = ">=1.11" },
     { name = "statsmodels", specifier = ">=0.14" },
     { name = "tabulate", specifier = ">=0.9" },
 ]
-provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=8.0" }]
