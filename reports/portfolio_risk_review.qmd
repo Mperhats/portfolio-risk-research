@@ -107,7 +107,7 @@ The portfolio under review holds four hypothetical equity-like assets with `{pyt
 
 Four findings matter for a reader who has to decide whether the concentration is tolerable:
 
-1. **Daily losses are fat-tailed.** Excess kurtosis is `{python} num(p_["Excess kurtosis"], 1)` and a Student-t fit puts the tail index at ν ≈ `{python} num(tfit.dof, 1)`. A normal model would have expected about `{python} num(expected_exceed99, 0)` days beyond its 99% loss threshold; the sample contains `{python} exceed_g99`.
+1. **Daily losses are fat-tailed.** Excess kurtosis is `{python} num(p_["Excess kurtosis"], 1)` and a Student-t fit puts the tail index at $\nu \approx$ `{python} num(tfit.dof, 1)`. A normal model would have expected about `{python} num(expected_exceed99, 0)` days beyond its 99% loss threshold; the sample contains `{python} exceed_g99`.
 2. **The 99% one-day estimated loss threshold is roughly `{python} pct(var99, 1)` of value (`{python} k(var99 * V0)` on `{python} k(V0)`), and the average loss on the days that breach it is `{python} pct(es99, 1)` (`{python} k(es99 * V0)`).** Expected Shortfall exceeds Value at Risk by a factor of `{python} num(es99 / var99, 2)` at this level; the Gaussian estimate of the same threshold is `{python} pct(gvar99, 1)`, an understatement of `{python} pct(1 - gvar99 / var99, 0)` relative to the historical figure.
 3. **The estimates are themselves uncertain.** A 90% block-bootstrap interval for the 99% VaR runs from `{python} pct(bv("VaR", 0.99, "lower"), 1)` to `{python} pct(bv("VaR", 0.99, "upper"), 1)`; for the 99% Expected Shortfall it runs from `{python} pct(bv("ES", 0.99, "lower"), 1)` to `{python} pct(bv("ES", 0.99, "upper"), 1)`. Reporting a single number at the 99% level overstates precision.
 4. **Path risk dominates single-day risk.** The maximum drawdown was `{python} pct(dds.max_drawdown, 1)` over `{python} dds.duration_days` trading days, and the stress scenario with the largest loss ("`{python} worst_stress["scenario"]`") costs `{python} pct(-worst_stress["portfolio_return"], 0)` of value, roughly `{python} num(-worst_stress["portfolio_return"] / var99, 0)` times the 99% one-day threshold.
@@ -127,12 +127,11 @@ Two limits are set at the outset. First, the analysis is univariate at the portf
 ```{python}
 #| label: tbl-weights
 #| tbl-cap: "Illustrative target weights. The portfolio is rebalanced to these weights daily in every calculation; the assets are hypothetical."
-#| column: margin
 w = pd.DataFrame({"Weight": [f"{v:.0%}" for v in cfg.WEIGHTS.values()]}, index=[cfg.LABELS[a] for a in cfg.WEIGHTS])
 Markdown(w.to_markdown())
 ```
 
-**Source.** The price file in use is `` `{python} SOURCE_PATH.split("/")[-1]` `` (source: *`{python} SOURCE`*). The synthetic generator draws daily log returns from a correlated, standardised Student-t distribution with ν = `{python} num(cfg.T_DOF, 0)`, applies a volatility multiplier of `{python} num(cfg.HIGH_VOL_MULTIPLIER, 1)` between `{python} cfg.HIGH_VOL_START` and `{python} cfg.HIGH_VOL_END`, and adds an occasional negative jump (daily probability `{python} pct(cfg.JUMP_PROBABILITY, 1)`, size between `{python} pct(-cfg.JUMP_MAX, 0)` and `{python} pct(-cfg.JUMP_MIN, 0)`, partly common to all assets). Each series has its own drift and volatility; the correlation matrix is specified explicitly. Everything is fixed by the seed `{python} cfg.SEED` in `src/config.py`. The sample runs from `{python} first_day` to `{python} last_day`.
+**Source.** The price file in use is `` `{python} SOURCE_PATH.split("/")[-1]` `` (source: *`{python} SOURCE`*). The synthetic generator draws daily log returns from a correlated, standardised Student-t distribution with $\nu$ = `{python} num(cfg.T_DOF, 0)`, applies a volatility multiplier of `{python} num(cfg.HIGH_VOL_MULTIPLIER, 1)` between `{python} cfg.HIGH_VOL_START` and `{python} cfg.HIGH_VOL_END`, and adds an occasional negative jump (daily probability `{python} pct(cfg.JUMP_PROBABILITY, 1)`, size between `{python} pct(-cfg.JUMP_MAX, 0)` and `{python} pct(-cfg.JUMP_MIN, 0)`, partly common to all assets). Each series has its own drift and volatility; the correlation matrix is specified explicitly. Everything is fixed by the seed `{python} cfg.SEED` in `src/config.py`. The sample runs from `{python} first_day` to `{python} last_day`.
 
 **What the design does and does not imply.** The generator was built to exhibit fat tails, volatility clustering by regime, and jump days, because those are the features that separate the estimators studied below. It does *not* reproduce any particular market and its parameter values were not calibrated to one. The seed was chosen from a handful of candidates so that the path is representative rather than degenerate; that choice is documented in the configuration and can be changed with one argument to the generator.
 
@@ -149,10 +148,8 @@ and the portfolio log return is $\ell_{p,t} = \ln(1 + r_{p,t})$. Constant weight
 ```{python}
 #| label: fig-growth
 #| fig-cap: "Growth of one unit invested at the start of the sample. The portfolio (blue) is compared with the benchmark (gray); individual assets are shown as light context lines. The vertical axis is logarithmic so equal vertical distances are equal percentage moves; the shaded band marks the high-volatility regime built into the synthetic generator."
-#| column: page
-#| fig-cap-location: bottom
-#| fig-width: 10
-#| fig-height: 4.2
+#| fig-width: 6.5
+#| fig-height: 3.2
 _ = F.cumulative_growth(growth)
 ```
 
@@ -161,8 +158,6 @@ The portfolio's path in @fig-growth is dominated by its largest holding: `{pytho
 ```{python}
 #| label: tbl-summary
 #| tbl-cap: "Daily-return summary by series. Means and volatilities are annualised from daily simple returns (252 days); skewness and excess kurtosis are sample moments; maximum drawdown is the largest peak-to-trough decline of cumulative growth."
-#| column: page
-#| tbl-cap-location: bottom
 t = stats_tbl.copy()
 t.columns = [cfg.LABELS[c] for c in t.columns]
 fmt = {
@@ -179,20 +174,18 @@ Three features of @tbl-summary carry through the rest of the analysis. The portf
 ```{python}
 #| label: fig-distribution
 #| fig-cap: "Daily portfolio returns (histogram) with the fitted normal (gray) and Student-t (blue) densities. On the linear scale the two curves are nearly indistinguishable except at the peak; on the log scale the Student-t follows the observed tails while the normal density collapses. The rust region marks losses beyond the 99% historical loss threshold."
-#| column: page
-#| fig-cap-location: bottom
-#| fig-width: 10
-#| fig-height: 3.8
+#| fig-width: 6.5
+#| fig-height: 3.0
 _ = F.return_distribution(port, tfit, var99=var99)
 ```
 
-The Student-t fit in @fig-distribution has ν = `{python} num(tfit.dof, 2)` degrees of freedom, location `{python} pct(tfit.loc, 3)` and scale `{python} pct(tfit.scale, 2)` per day. A tail index this low implies finite variance but a fourth moment that barely exists, which is consistent with the sample kurtosis being large and unstable. The normal fit, by construction, matches the mean and variance and nothing else.
+The Student-t fit in @fig-distribution has $\nu$ = `{python} num(tfit.dof, 2)` degrees of freedom, location `{python} pct(tfit.loc, 3)` and scale `{python} pct(tfit.scale, 2)` per day. A tail index this low implies finite variance but a fourth moment that barely exists, which is consistent with the sample kurtosis being large and unstable. The normal fit, by construction, matches the mean and variance and nothing else.
 
 ```{python}
 #| label: fig-qq
 #| fig-cap: "Quantile-quantile plots of observed daily returns against the fitted normal (left) and Student-t (right). Points on the diagonal would indicate a perfect fit. The worst 1% of days are in rust: they sit far below the normal line and close to the Student-t line."
-#| fig-width: 7.2
-#| fig-height: 3.6
+#| fig-width: 6.5
+#| fig-height: 3.3
 _ = F.qq_plots(port, tfit)
 ```
 
@@ -201,9 +194,8 @@ _ = F.qq_plots(port, tfit)
 ```{python}
 #| label: fig-corr
 #| fig-cap: "Full-sample correlation of daily simple returns. Blue shades are positive correlations; rust would indicate negative ones. The benchmark row shows that every asset is a partial exposure to the same common factor."
-#| column: margin
-#| fig-width: 3.6
-#| fig-height: 3.2
+#| fig-width: 3.4
+#| fig-height: 3.0
 _ = F.correlation_matrix(corr)
 ```
 
@@ -214,10 +206,8 @@ _ = F.correlation_matrix(corr)
 ```{python}
 #| label: fig-drawdown
 #| fig-cap: "Drawdown of the portfolio from its running peak. The rust area is the fraction of value lost relative to the previous high-water mark; the annotation marks the maximum drawdown, its peak and trough dates, and the time to recovery, if any, within the sample."
-#| column: page
-#| fig-cap-location: bottom
-#| fig-width: 10
-#| fig-height: 3.2
+#| fig-width: 6.5
+#| fig-height: 2.7
 _ = F.drawdown(dd, dds)
 ```
 
@@ -226,10 +216,8 @@ A one-day loss threshold describes a single trading day. A holder of the portfol
 ```{python}
 #| label: fig-rolling
 #| fig-cap: "Rolling 63-day annualised volatility of the portfolio (blue) and benchmark (gray), and the rolling 63-day correlation between them. Volatility is not constant: it roughly doubles in the high-volatility regime and remains elevated for months afterwards. The correlation with the benchmark also moves, which limits what a single full-sample beta can say."
-#| column: page
-#| fig-cap-location: bottom
-#| fig-width: 10
-#| fig-height: 4.6
+#| fig-width: 6.5
+#| fig-height: 3.8
 _ = F.rolling_diagnostics(vol_p, vol_b, corr_pb)
 ```
 
@@ -255,8 +243,8 @@ where the integral form holds for continuous distributions [@mcneil2015; @acerbi
 ```{python}
 #| label: fig-var-es
 #| fig-cap: "One-day Value at Risk (open circles) and Expected Shortfall (filled rust circles) as a percentage of portfolio value, for three estimators at the 95% and 99% levels. At 95% the estimators broadly agree; at 99% the Gaussian VaR sits well below the historical and Student-t figures, and every ES exceeds its VaR by a wide margin."
-#| fig-width: 7.2
-#| fig-height: 3.0
+#| fig-width: 6.5
+#| fig-height: 2.9
 _ = F.var_es_comparison(rt)
 ```
 
@@ -288,7 +276,7 @@ At the 95% level the three estimators are close: `{python} pct(var95, 2)` (histo
 
 At the 99% level they separate: `{python} pct(var99, 2)` (historical), `{python} pct(gvar99, 2)` (Gaussian) and `{python} pct(tvar99, 2)` (Student-t). The Gaussian figure is `{python} pct(1 - gvar99 / var99, 0)` below the historical one; the Student-t figure is within `{python} pct(abs(1 - tvar99 / var99), 0)` of it. For Expected Shortfall the divergence is larger still (`{python} pct(ges99, 2)` Gaussian versus `{python} pct(tes99, 2)` Student-t and `{python} pct(es99, 2)` historical), because ES integrates over the whole tail, precisely where the normal density is thinnest.
 
-Whether the fitted ν = `{python} num(tfit.dof, 2)` is "defensible" depends on the use. It exceeds the minimum of `{python} num(cfg.T_FIT_MIN_DOF, 2)` set in the configuration, so the variance is finite and the ES formula is well defined. It is also estimated from one sample of `{python} f"{n_obs:,}"` days, and tail-index estimates are notoriously sensitive to a handful of extreme observations. A value between roughly 3 and 6 would be consistent with the same data; the parametric VaR and ES move materially across that range.
+Whether the fitted $\nu$ = `{python} num(tfit.dof, 2)` is "defensible" depends on the use. It exceeds the minimum of `{python} num(cfg.T_FIT_MIN_DOF, 2)` set in the configuration, so the variance is finite and the ES formula is well defined. It is also estimated from one sample of `{python} f"{n_obs:,}"` days, and tail-index estimates are notoriously sensitive to a handful of extreme observations. A value between roughly 3 and 6 would be consistent with the same data; the parametric VaR and ES move materially across that range.
 
 # Uncertainty in tail estimates
 
@@ -297,8 +285,8 @@ A 99% one-day estimate from `{python} f"{n_obs:,}"` days rests on about `{python
 ```{python}
 #| label: fig-bootstrap
 #| fig-cap: "Point estimates (dots) and 90% percentile bootstrap intervals for the historical one-day VaR (blue) and Expected Shortfall (rust) at 95% and 99%. The 99% intervals are several times wider than the 95% ones, and the ES intervals are wider than the VaR intervals at the same level, because they depend on fewer and more extreme observations."
-#| fig-width: 7.2
-#| fig-height: 2.8
+#| fig-width: 6.5
+#| fig-height: 2.6
 _ = F.bootstrap_intervals(boot)
 ```
 
@@ -334,18 +322,16 @@ One adjustment is needed to make the comparison like-for-like. The maximum-likel
 ```{python}
 #| label: fig-sim-fan
 #| fig-cap: "Fan charts of simulated portfolio value over one year under the three engines: bands cover the 1st–99th (lightest), 5th–95th, and 25th–75th (darkest) percentiles of the simulated paths at each horizon; the black line is the median and the rust line the 1st percentile. The gray horizontal line is the starting value. With a common drift, the engines agree on the centre and differ only modestly in how far the lower bands reach."
-#| column: page
-#| fig-cap-location: bottom
-#| fig-width: 10
-#| fig-height: 3.4
+#| fig-width: 6.5
+#| fig-height: 2.9
 _ = F.simulation_fan(sims)
 ```
 
 ```{python}
 #| label: fig-sim-terminal
 #| fig-cap: "Distribution of simulated portfolio value after one year under each engine, on a shared horizontal axis. The rust shading covers the worst 5% of outcomes; the vertical lines mark the 1st and 5th percentiles (rust) and the median (blue). At a one-year horizon the three shapes are similar: aggregation over 252 days averages out most of the difference between daily tail models."
-#| fig-width: 7.2
-#| fig-height: 4.8
+#| fig-width: 6.5
+#| fig-height: 4.4
 _ = F.simulation_terminal(sims)
 ```
 
@@ -371,8 +357,6 @@ Stress scenarios abandon probability altogether and ask what the current weights
 ```{python}
 #| label: tbl-stress
 #| tbl-cap: "Stress scenarios and their assumptions. Losses are on the illustrative notional and are instantaneous; no recovery, hedge, or second-round effect is modelled."
-#| column: page
-#| tbl-cap-location: bottom
 sd = stress.copy()
 sd["Portfolio return"] = sd["portfolio_return"].map("{:.1%}".format)
 sd[f"Loss ({cfg.CURRENCY})"] = sd["loss_value"].map("{:,.0f}".format)
@@ -384,8 +368,8 @@ Markdown(sd.to_markdown(index=False))
 ```{python}
 #| label: fig-stress
 #| fig-cap: "Immediate loss under each stress scenario, sorted, with the historical one-day 99% VaR and Expected Shortfall drawn as vertical reference lines. The specified scenarios are two to four times the size of a bad statistical day, which is the point: they describe losses that a daily-frequency risk measure is not designed to bound."
-#| fig-width: 7.2
-#| fig-height: 3.2
+#| fig-width: 6.5
+#| fig-height: 3.0
 _ = F.stress_losses(stress, reference={"1-day 99% VaR": var99, "1-day 99% ES": es99})
 ```
 
@@ -400,7 +384,7 @@ _ = F.stress_losses(stress, reference={"1-day 99% VaR": var99, "1-day 99% ES": e
 Specific sources of model risk, in rough order of importance:
 
 - **Non-stationarity.** Volatility and correlation vary through the sample (@fig-rolling). Unconditional estimators average over regimes; a conditional model would produce thresholds that rise in stress and fall in calm.
-- **Tail-index uncertainty.** The fitted ν is estimated from few extreme observations; values across a plausible range change the 99% parametric figures by tens of percent.
+- **Tail-index uncertainty.** The fitted $\nu$ is estimated from few extreme observations; values across a plausible range change the 99% parametric figures by tens of percent.
 - **Sampling error.** The bootstrap intervals show that even the historical estimates carry wide uncertainty at the 99% level, and the percentile bootstrap tends to understate it for quantiles.
 - **Dependence structure.** The analysis is univariate on the portfolio series. It does not model how the four assets co-move in the tail, where correlations typically increase.
 - **Constant weights and frictionless rebalancing.** Real drift in weights, costs, and liquidity constraints change the realised return series, especially in drawdowns.
@@ -449,7 +433,7 @@ All computations are in `src/` (`returns.py`, `risk.py`, `simulation.py`, `figur
 print(sha[:32] + "\n" + sha[32:])
 ```
 
-**Design note.** Figures follow a small set of rules borrowed from @tufte2001: one restrained palette (deep blue for the primary series, charcoal and gray for context, rust only for loss), direct labels instead of legend boxes where possible, no gridlines that the data do not need, and captions that state what the reader should see. Wide charts occupy the page column, supporting diagnostics sit in the margin, and every figure carries units.
+**Design note.** Figures follow a small set of rules borrowed from @tufte2001: one restrained palette (deep blue for the primary series, charcoal and gray for context, rust only for loss), direct labels instead of legend boxes where possible, no gridlines that the data do not need, and captions that state what the reader should see. Every figure is set to the width of the text column so the page reads as one measure, and every figure carries units.
 
 ::: {.content-visible when-format="html"}
 # References {.unnumbered}

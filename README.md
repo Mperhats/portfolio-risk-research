@@ -13,7 +13,8 @@ cloud services, credentials, or paid data.
 > advice or a recommendation. Past synthetic behaviour is not a forecast.
 
 Primary artefact: `reports/portfolio_risk_review.html` (self-contained HTML).
-Optional: `reports/portfolio_risk_review.pdf` via Quarto's bundled Typst.
+Optional PDFs via LaTeX (`reports/portfolio_risk_review.pdf`) or Quarto's
+bundled Typst (`reports/portfolio_risk_review-typst.pdf`).
 
 ## Prerequisites (macOS)
 
@@ -88,14 +89,28 @@ scripts/render_report.sh --html   # HTML only
 Output: `reports/portfolio_risk_review.html`. Rendering runs the full analysis
 (bootstrap and 60,000 simulated paths) and takes roughly a minute.
 
-## Render the PDF (optional, Typst)
+## Render a PDF (optional)
+
+Two routes produce a PDF; both keep every figure within the text column.
+
+**Typst** (bundled with Quarto, no TeX installation needed):
 
 ```bash
 quarto render reports/portfolio_risk_review.qmd --to typst
 ```
 
-Output: `reports/portfolio_risk_review.pdf`. If this fails on your machine,
-the HTML render is unaffected. Check `quarto check` for the Typst line.
+Output: `reports/portfolio_risk_review-typst.pdf`.
+
+**LaTeX** (what Positron's *Render PDF* uses when a TeX distribution such as
+TeX Live or TinyTeX is installed; `quarto install tinytex` sets one up):
+
+```bash
+quarto render reports/portfolio_risk_review.qmd --to pdf
+```
+
+Output: `reports/portfolio_risk_review.pdf`. If either route fails on your
+machine, the HTML render is unaffected. `quarto check` reports the Typst and
+LaTeX status.
 
 ## Open and run in Positron
 
@@ -106,9 +121,9 @@ the HTML render is unaffected. Check `quarto check` for the Typst line.
    interpreter, click the interpreter selector (top right) and choose the
    project `.venv`.
 3. Open `reports/portfolio_risk_review.qmd`.
-4. Click **Render** (or press `⇧⌘K`) and pick **HTML**; the preview opens in
-   the Viewer pane. Code cells can also be run interactively with the
-   *Run Cell* buttons.
+4. Click **Preview** (or press `⇧⌘K`) for the HTML report in the Viewer pane,
+   or use the format dropdown next to it to render the PDF. Code cells can also
+   be run interactively with the *Run Cell* buttons.
 5. Tests: open the Terminal and run `.venv/bin/python -m pytest`, or use the
    Testing pane after selecting the interpreter.
 

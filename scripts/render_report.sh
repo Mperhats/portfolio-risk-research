@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Render the research memo. HTML always; PDF (Typst) only if the toolchain works.
+# Render the research memo. HTML always; PDF via Typst (bundled with Quarto)
+# when it works; PDF via LaTeX only on request (needs a TeX distribution).
 #
 # Usage, from the project root:
-#   scripts/render_report.sh            # HTML, then PDF if available
+#   scripts/render_report.sh            # HTML, then reports/portfolio_risk_review-typst.pdf
 #   scripts/render_report.sh --html     # HTML only
-#   scripts/render_report.sh --pdf      # PDF only
+#   scripts/render_report.sh --pdf      # Typst PDF only
+#   scripts/render_report.sh --latex    # LaTeX PDF (reports/portfolio_risk_review.pdf)
 #
 # Quarto lookup order: $QUARTO_BIN, `quarto` on PATH, then the copy bundled
 # with Positron Desktop on macOS.
@@ -64,7 +66,7 @@ fi
 if [[ "$MODE" == "all" || "$MODE" == "--pdf" ]]; then
   if "$QUARTO" typst --version >/dev/null 2>&1; then
     if "$QUARTO" render "$REPORT" --to typst; then
-      echo "PDF:  reports/portfolio_risk_review.pdf"
+      echo "PDF (Typst): reports/portfolio_risk_review-typst.pdf"
     else
       echo "PDF render failed; the HTML report is unaffected." >&2
       [[ "$MODE" == "--pdf" ]] && exit 1
@@ -72,5 +74,15 @@ if [[ "$MODE" == "all" || "$MODE" == "--pdf" ]]; then
   else
     echo "Typst is not available through this Quarto install; skipping PDF." >&2
     [[ "$MODE" == "--pdf" ]] && exit 1
+  fi
+fi
+
+if [[ "$MODE" == "--latex" ]]; then
+  if command -v lualatex >/dev/null 2>&1 || command -v xelatex >/dev/null 2>&1; then
+    "$QUARTO" render "$REPORT" --to pdf
+    echo "PDF (LaTeX): reports/portfolio_risk_review.pdf"
+  else
+    echo "No LaTeX engine found; use --pdf for the Typst route or install TinyTeX (quarto install tinytex)." >&2
+    exit 1
   fi
 fi

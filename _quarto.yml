@@ -32,30 +32,54 @@ format:
     embed-resources: true
     fig-format: svg
     fig-responsive: true
+    # Figures and tables stay in the text column; captions and citations use
+    # the margin, which keeps the Tufte feel without charts overrunning the text.
     cap-location: margin
     reference-location: margin
     citation-location: margin
     grid:
       sidebar-width: 220px
-      body-width: 760px
-      margin-width: 330px
-      gutter-width: 2.2rem
+      body-width: 720px
+      margin-width: 300px
+      gutter-width: 2rem
     html-math-method: katex
     code-tools: false
     anchor-sections: false
     smooth-scroll: true
-  # Optional PDF via Typst (bundled with Quarto >= 1.4). If this format fails,
-  # HTML rendering is unaffected: run `quarto render --to html`.
-  typst:
+  # PDF via LaTeX (what "Render PDF" in Positron produces when a TeX
+  # distribution is installed). Figures are placed where they appear in the
+  # text and never exceed the text width.
+  pdf:
+    documentclass: article
     papersize: a4
-    fontsize: 10pt
+    fontsize: 10.5pt
+    geometry:
+      - margin=2.6cm
+    linestretch: 1.1
+    colorlinks: true
+    linkcolor: memoblue
+    citecolor: memoblue
+    urlcolor: memoblue
+    include-in-header:
+      text: |
+        \definecolor{memoblue}{HTML}{25609f}
+        \usepackage{float}
+    fig-pos: "H"
+    fig-format: pdf
+    cap-location: bottom
+    reference-location: document
+    citation-location: document
+    toc: false
+    keep-tex: false
+  # PDF via Typst (bundled with Quarto, no TeX needed):
+  #   quarto render reports/portfolio_risk_review.qmd --to typst
+  typst:
+    output-file: portfolio_risk_review-typst.pdf
+    papersize: a4
+    fontsize: 10.5pt
     margin:
-      x: 1.8cm
-      y: 2.2cm
-    grid:
-      body-width: 11.6cm
-      margin-width: 4.4cm
-      gutter-width: 0.6cm
+      x: 2.6cm
+      y: 2.6cm
     fig-format: svg
     number-sections: true
     toc: false

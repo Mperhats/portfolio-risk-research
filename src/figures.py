@@ -159,7 +159,7 @@ def cumulative_growth(
     primary: str = "portfolio",
     benchmark: str = cfg.BENCHMARK,
     context: Sequence[str] = cfg.ASSETS,
-    figsize: tuple[float, float] = (10, 4.2),
+    figsize: tuple[float, float] = (6.5, 3.2),
 ) -> Figure:
     """Growth of one unit for the portfolio, the benchmark and, in light gray, the assets."""
     apply_style()
@@ -195,7 +195,7 @@ def return_distribution(
     returns: pd.Series,
     tfit: StudentTFit,
     var99: float | None = None,
-    figsize: tuple[float, float] = (10, 3.8),
+    figsize: tuple[float, float] = (6.5, 3.0),
 ) -> Figure:
     """Daily-return histogram with fitted normal and Student-t densities.
 
@@ -255,7 +255,7 @@ def return_distribution(
 # --------------------------------------------------------------------------- #
 
 
-def qq_plots(returns: pd.Series, tfit: StudentTFit, figsize: tuple[float, float] = (7.2, 3.6)) -> Figure:
+def qq_plots(returns: pd.Series, tfit: StudentTFit, figsize: tuple[float, float] = (6.5, 3.3)) -> Figure:
     """Quantile-quantile plots against the fitted normal and Student-t."""
     apply_style()
     r = np.sort(returns.to_numpy())
@@ -291,7 +291,7 @@ def qq_plots(returns: pd.Series, tfit: StudentTFit, figsize: tuple[float, float]
 # --------------------------------------------------------------------------- #
 
 
-def drawdown(dd: pd.Series, summary, figsize: tuple[float, float] = (10, 3.2)) -> Figure:
+def drawdown(dd: pd.Series, summary, figsize: tuple[float, float] = (6.5, 2.7)) -> Figure:
     """Underwater chart: distance from the running peak, with the maximum annotated."""
     apply_style()
     fig, ax = plt.subplots(figsize=figsize)
@@ -329,7 +329,7 @@ def rolling_diagnostics(
     vol_bench: pd.Series,
     corr: pd.Series,
     window: int = cfg.ROLLING_WINDOW,
-    figsize: tuple[float, float] = (10, 4.6),
+    figsize: tuple[float, float] = (6.5, 3.8),
 ) -> Figure:
     """Two stacked panels: rolling annualised volatility and rolling correlation."""
     apply_style()
@@ -358,7 +358,7 @@ def rolling_diagnostics(
 # --------------------------------------------------------------------------- #
 
 
-def var_es_comparison(table: pd.DataFrame, figsize: tuple[float, float] = (7.2, 3.0)) -> Figure:
+def var_es_comparison(table: pd.DataFrame, figsize: tuple[float, float] = (6.5, 2.9)) -> Figure:
     """Dot plot of VaR (open blue) and ES (filled rust) by method and level."""
     apply_style()
     levels = sorted(table["level"].unique())
@@ -392,7 +392,7 @@ def var_es_comparison(table: pd.DataFrame, figsize: tuple[float, float] = (7.2, 
 # --------------------------------------------------------------------------- #
 
 
-def bootstrap_intervals(summary: pd.DataFrame, ci: float = 0.90, figsize: tuple[float, float] = (7.2, 2.8)) -> Figure:
+def bootstrap_intervals(summary: pd.DataFrame, ci: float = 0.90, figsize: tuple[float, float] = (6.5, 2.6)) -> Figure:
     """Point estimates with percentile bootstrap intervals, one row per measure and level."""
     apply_style()
     rows = summary.sort_values(["level", "measure"], ascending=[False, False]).reset_index(drop=True)
@@ -424,7 +424,7 @@ def bootstrap_intervals(summary: pd.DataFrame, ci: float = 0.90, figsize: tuple[
 def simulation_terminal(
     results: dict[str, SimulationResult],
     v0: float = cfg.INITIAL_VALUE,
-    figsize: tuple[float, float] = (7.2, 4.8),
+    figsize: tuple[float, float] = (6.5, 4.4),
 ) -> Figure:
     """One panel per engine, shared x-axis, with the 1st and 5th percentiles marked."""
     apply_style()
@@ -462,7 +462,7 @@ def simulation_terminal(
 def simulation_fan(
     results: dict[str, SimulationResult],
     v0: float = cfg.INITIAL_VALUE,
-    figsize: tuple[float, float] = (10, 3.4),
+    figsize: tuple[float, float] = (6.5, 2.9),
 ) -> Figure:
     """Side-by-side fan charts (1–99, 5–95, 25–75 bands and the median) for each engine."""
     apply_style()
@@ -503,7 +503,7 @@ def stress_losses(
     table: pd.DataFrame,
     reference: dict[str, float] | None = None,
     value: float = cfg.INITIAL_VALUE,
-    figsize: tuple[float, float] = (7.2, 3.2),
+    figsize: tuple[float, float] = (6.5, 3.0),
 ) -> Figure:
     """Horizontal bars of scenario losses in currency, sorted, with optional reference lines.
 
@@ -538,7 +538,7 @@ def stress_losses(
 # --------------------------------------------------------------------------- #
 
 
-def correlation_matrix(corr: pd.DataFrame, figsize: tuple[float, float] = (3.6, 3.2)) -> Figure:
+def correlation_matrix(corr: pd.DataFrame, figsize: tuple[float, float] = (3.4, 3.0)) -> Figure:
     """Lower-triangle correlation cells with values, diverging blue (+) / rust (−)."""
     apply_style()
     c = corr.copy()
