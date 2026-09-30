@@ -1,0 +1,42 @@
+[project]
+name = "portfolio-risk-research"
+version = "0.1.0"
+description = "Tail-risk research memo on a concentrated synthetic equity portfolio (Quarto + Python)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+    "statsmodels>=0.14",
+    "pyarrow>=14.0",
+    "jupyter>=1.0",
+    "ipykernel>=6.29",
+    "nbformat>=5.9",
+    "nbclient>=0.9",
+    "pyyaml>=6.0",
+    "tabulate>=0.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["src"]

@@ -1,0 +1,63 @@
+project:
+  type: default
+  title: "Tail Risk in a Concentrated Equity Portfolio"
+  render:
+    - reports/portfolio_risk_review.qmd
+  execute-dir: project
+
+# Quarto discovers `.venv` in the project root and uses its Jupyter kernel.
+engine: jupyter
+jupyter: python3
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  error: false
+  freeze: false
+
+bibliography: references.bib
+link-citations: true
+
+number-sections: true
+fig-dpi: 150
+
+format:
+  html:
+    theme: styles.scss
+    toc: true
+    toc-depth: 2
+    toc-location: left
+    toc-title: "Contents"
+    embed-resources: true
+    fig-format: svg
+    fig-responsive: true
+    cap-location: margin
+    reference-location: margin
+    citation-location: margin
+    grid:
+      sidebar-width: 220px
+      body-width: 760px
+      margin-width: 330px
+      gutter-width: 2.2rem
+    html-math-method: katex
+    code-tools: false
+    anchor-sections: false
+    smooth-scroll: true
+  # Optional PDF via Typst (bundled with Quarto >= 1.4). If this format fails,
+  # HTML rendering is unaffected: run `quarto render --to html`.
+  typst:
+    papersize: a4
+    fontsize: 10pt
+    margin:
+      x: 1.8cm
+      y: 2.2cm
+    grid:
+      body-width: 11.6cm
+      margin-width: 4.4cm
+      gutter-width: 0.6cm
+    fig-format: svg
+    number-sections: true
+    toc: false
+    keep-typ: false
+    bibliographystyle: chicago-author-date
